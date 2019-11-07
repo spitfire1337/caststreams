@@ -37,6 +37,7 @@ class RaspberryChargerSensor(Entity):
         self._email = email
         self._password = password
         self._team = team
+        self._auth = None
         self.update()
 
     def update(self):
@@ -59,29 +60,34 @@ class RaspberryChargerSensor(Entity):
         #     self._description = 'Your Raspberry Pi is overheating, consider getting a fan or heat sinks.'
         # else:
         #     self._description = 'There is a problem with your power supply or system.'
-        ip = get('https://api.ipify.org').text
-        r = requests.post('http://api.caststreams.com:2095/login-web', json={"email": self._email,"androidId":"00:00","deviceId":"02:00:00:00:00:00","password":self._email,"ipaddress":ip})
-        r.status_code
-        if r.status_code==200:
-
-            data = r.json()
-            #print(data["token"])
-
-
-            token = data["token"]
-            r = requests.get('http://api.caststreams.com:2095/feeds', headers={ "Authorization": token})
+        if self._auth == None:
+            self.signIn()
+        else:
+            r = requests.get('http://api.caststreams.com:2095/feeds', headers={ "Authorization": self._auth})
             r.status_code
             if r.status_code==200:
                 # print(r.text)
-                self._state = token
+                self._state = "good"
                 self._attribute = {'description': "Retrieved stream list"}
             else:
                 self._state = "Unavailable"
                 self._attribute = {'description': "Failed to retrieve stream list"}
+
+
+    def signIn(self):
+        ip = get('https://api.ipify.org').text
+        r = requests.post('http://api.caststreams.com:2095/login-web', json={"email": self._email,"androidId":"00:00","deviceId":"02:00:00:00:00:00","password":self._email,"ipaddress":ip})
+        r.status_code
+        if r.status_code==200:
+            data = r.json()
+            token = data["token"]
+            self._auth = token
+            self._attribute = {'loggedin': "True","ip":ip}
+            self.update()
         else:
-            # print("Failed")
             self._state = "Unavailable"
             self._attribute = {'description': "Failed to login","ip":ip}
+
 
     @property
     def name(self):
