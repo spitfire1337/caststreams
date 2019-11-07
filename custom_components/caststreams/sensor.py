@@ -57,20 +57,20 @@ class CastStreamsSensor(Entity):
                 myfeed = None
                 dummytext = None
                 for feed in feeds:
-                    if self._team == feed["away"]["shortName"]:
-                        myteam=True
-                        dummytext=feed["away"]["shortName"]
-                    if self._team == feed["home"]["shortName"]:
-                        myteam=True
-                        dummytext =feed["home"]["shortName"]
-                    if myteam==True:
-                        description=feed["desc"].split(' ')
-                        if description[3]=="free":
-                            myfeed=feed["url"][0]
+                    description=feed["desc"].split(' ')
+                    if description[3]=="free":
+                        if self._team == feed["away"]["shortName"]:
+                            myteam=True
+                            url=feed["url"][0]
+                            dummytext=feed["away"]["shortName"]
+                        if self._team == feed["home"]["shortName"]:
+                            myteam=True
+                            dummytext =feed["home"]["shortName"]
+                            url=feed["url"][0]
+                        if myteam==True:
+                            self._state=url
+                            self._attribute = {'My_team': dummytext}
 
-                if myteam==True:
-                    self._state=myfeed
-                    self._attribute = {'My_team': dummytext}
 
             else:
                 self._state = "Unavailable"
