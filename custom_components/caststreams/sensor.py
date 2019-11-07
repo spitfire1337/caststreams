@@ -83,7 +83,7 @@ class CastStreamsSensor(Entity):
                 self.signIn()
 
     def getVidLink(self):
-        r = requests.get('http://api.caststreams.com:2095/feeds', headers={ "Authorization": self._auth})
+        r = requests.get('https://www.caststreams.com/api/getGame?isjson=yes&rUrl='+ self._streamurl, headers={ "Authorization": self._auth})
         r.status_code
         if r.status_code==200:
             data = r.json()
