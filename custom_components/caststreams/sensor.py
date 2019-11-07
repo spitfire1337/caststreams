@@ -42,24 +42,6 @@ class RaspberryChargerSensor(Entity):
 
     def update(self):
         """The update method"""
-        # _throttled = open(SYSFILE, 'r').read()[:-1]
-        # _throttled = _throttled[:4]
-        # if _throttled == '0':
-        #     self._description = 'Everything is working as intended'
-        # elif _throttled == '1000':
-        #     self._description = 'Under-voltage was detected, consider getting a uninterruptible power supply for your Raspberry Pi.'
-        # elif _throttled == '2000':
-        #     self._description = 'Your Raspberry Pi is limited due to a bad powersupply, replace the power supply cable or power supply itself.'
-        # elif _throttled == '3000':
-        #     self._description = 'Your Raspberry Pi is limited due to a bad powersupply, replace the power supply cable or power supply itself.'
-        # elif _throttled == '4000':
-        #     self._description = 'The Raspberry Pi is throttled due to a bad power supply this can lead to corruption and instability, please replace your changer and cables.'
-        # elif _throttled == '5000':
-        #     self._description = 'The Raspberry Pi is throttled due to a bad power supply this can lead to corruption and instability, please replace your changer and cables.'
-        # elif _throttled == '8000':
-        #     self._description = 'Your Raspberry Pi is overheating, consider getting a fan or heat sinks.'
-        # else:
-        #     self._description = 'There is a problem with your power supply or system.'
         if self._auth == None:
             self.signIn()
         else:
@@ -67,11 +49,28 @@ class RaspberryChargerSensor(Entity):
             r.status_code
             if r.status_code==200:
                 # print(r.text)
+                data = r.json()
+                feeds = data["feeds"]
                 self._state = "good"
                 self._attribute = {'description': "Retrieved stream list"}
+                myteam = False
+                myfeed = None
+                for feed in feeds:
+                    if self._team == feed["away"]["shortName"]:
+                        myteam=True
+                        myfeed=feed["url"]
+                    if self._team == feed["home"]["shortName"]:
+                        myteam=True
+                        myfeed=feed["url"]
+
+                if myteam==True:
+                    self._state=myfeed
+
             else:
                 self._state = "Unavailable"
                 self._attribute = {'description': "Failed to retrieve stream list"}
+                self._auth = None
+                self.signIn()
 
 
     def signIn(self):
