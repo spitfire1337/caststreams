@@ -27,9 +27,9 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     email = config.get(CONF_EMAIL)
     password = config.get(CONF_PASSWORD)
     team = config.get(CONF_TEAM)
-    add_devices([RaspberryChargerSensor(email, password,team)], True)
+    add_devices([CastStreamsSensor(email, password,team)], True)
 
-class RaspberryChargerSensor(Entity):
+class CastStreamsSensor(Entity):
     """The class for this sensor"""
     def __init__(self, email, password,team):
         self._state = None
@@ -58,10 +58,12 @@ class RaspberryChargerSensor(Entity):
                 for feed in feeds:
                     if self._team == feed["away"]["shortName"]:
                         myteam=True
-                        myfeed=feed["url"]
                     if self._team == feed["home"]["shortName"]:
                         myteam=True
-                        myfeed=feed["url"]
+                    if myteam==True:
+                        description=feed["desc"].split(' ')
+                        if description[3]=="free":
+                            myfeed=feed["url"][0]
 
                 if myteam==True:
                     self._state=myfeed
