@@ -13,10 +13,12 @@ SYSFILE = '/sys/devices/platform/soc/soc:firmware/get_throttled'
 
 CONF_EMAIL = 'email'
 CONF_PASSWORD = 'password'
+CONF_TEAM = 'team'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
     vol.Required(CONF_PASSWORD): cv.string
+    vol.Required(CONF_TEAM): cv.string
     })
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
@@ -25,15 +27,16 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     email = config.get(CONF_EMAIL)
     password = config.get(CONF_PASSWORD)
 
-    add_devices([RaspberryChargerSensor(email, password)], True)
+    add_devices([RaspberryChargerSensor(email, password,team)], True)
 
 class RaspberryChargerSensor(Entity):
     """The class for this sensor"""
-    def __init__(self, email, password):
+    def __init__(self, email, password,team):
         self._state = None
         self._description = None
         self._email = email
         self._password = password
+        self._team = team
         self.update()
 
     def update(self):
@@ -56,8 +59,8 @@ class RaspberryChargerSensor(Entity):
         #     self._description = 'Your Raspberry Pi is overheating, consider getting a fan or heat sinks.'
         # else:
         #     self._description = 'There is a problem with your power supply or system.'
-
-        r = requests.post('http://api.caststreams.com:2095/login-web', json={"email": "skatermike21988@yahoo.com","androidId":"00:00","deviceId":"02:00:00:00:00:00","password":"skater2","ipaddress":"104.136.250.205"})
+        ip = get('https://api.ipify.org').text
+        r = requests.post('http://api.caststreams.com:2095/login-web', json={"email": self._email,"androidId":"00:00","deviceId":"02:00:00:00:00:00","password":self._email,"ipaddress":ip})
         r.status_code
         if r.status_code==200:
 
@@ -78,7 +81,7 @@ class RaspberryChargerSensor(Entity):
         else:
             # print("Failed")
             self._state = "Unavailable"
-            self._attribute = {'description': "Failed to login"}
+            self._attribute = {'description': "Failed to login","ip":ip}
 
     @property
     def name(self):
