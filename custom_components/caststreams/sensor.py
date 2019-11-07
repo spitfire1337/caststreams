@@ -14,11 +14,16 @@ SYSFILE = '/sys/devices/platform/soc/soc:firmware/get_throttled'
 CONF_EMAIL = 'email'
 CONF_PASSWORD = 'password'
 CONF_TEAM = 'team'
+CONF_TYPE = 'usertype'
+CONF_REGION = 'region'
+
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
     vol.Required(CONF_PASSWORD): cv.string,
-    vol.Required(CONF_TEAM): cv.string
+    vol.Required(CONF_TYPE): cv.string,
+    vol.Required(CONF_TEAM): cv.string,
+    vol.Optional(CONF_REGION, default="US"): cv.string
     })
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
@@ -27,11 +32,13 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     email = config.get(CONF_EMAIL)
     password = config.get(CONF_PASSWORD)
     team = config.get(CONF_TEAM)
-    add_devices([CastStreamsSensor(email, password,team)], True)
+    usertype = config.get(CONF_TYPE)
+    region = config.get(CONF_REGION)
+    add_devices([CastStreamsSensor(email, password,team,usertype)], True)
 
 class CastStreamsSensor(Entity):
     """The class for this sensor"""
-    def __init__(self, email, password,team):
+    def __init__(self, email, password,team,usertype,region):
         self._state = None
         self._description = None
         self._email = email
@@ -39,6 +46,8 @@ class CastStreamsSensor(Entity):
         self._team = team
         self._auth = None
         self._streamurl = None
+        self._usertype = usertype
+        self._region = region
         self.update()
 
     def update(self):
@@ -60,19 +69,40 @@ class CastStreamsSensor(Entity):
                 dummytext = None
                 for feed in feeds:
                     description=feed["desc"].split(' ')
-                    if description[3]=="free":
-                        if self._team == feed["away"]["shortName"]:
-                            myteam=True
-                            self._streamurl=feed["url"][0]
-                            dummytext=feed["away"]["shortName"]
-                            self._attribute = {'game': feed["name"]}
-                            self.getVidLink()
-                        if self._team == feed["home"]["shortName"]:
-                            myteam=True
-                            dummytext =feed["home"]["shortName"]
-                            self._attribute = {'game': feed["name"]}
-                            self._streamurl=feed["url"][0]
-                            self.getVidLink()
+                    if description[3]==self._usertype:
+                        if self._region == "EU" & self._usertype == "donor":
+                            if description[5]=="EU":
+                                if self._team == feed["away"]["shortName"]:
+                                    myteam=True
+                                    self._streamurl=feed["url"][0]
+                                    dummytext=feed["away"]["shortName"]
+                                    self._attribute = {'game': feed["name"]}
+                                    self.getVidLink()
+                                if self._team == feed["home"]["shortName"]:
+                                    myteam=True
+                                    dummytext =feed["home"]["shortName"]
+                                    self._attribute = {'game': feed["name"]}
+                                    self._streamurl=feed["url"][0]
+                                    self.getVidLink()
+                        else:
+                            if self._team == feed["away"]["shortName"]:
+                                myteam=True
+                                self._streamurl=feed["url"][0]
+                                dummytext=feed["away"]["shortName"]
+                                self._attribute = {'game': feed["name"]}
+                                if self._usertype=="donor" & description[1]=="away":
+                                    self.getVidLink()
+                                else:
+                                    self.getVidLink()
+                            if self._team == feed["home"]["shortName"]:
+                                myteam=True
+                                dummytext =feed["home"]["shortName"]
+                                self._attribute = {'game': feed["name"]}
+                                self._streamurl=feed["url"][0]
+                                if self._usertype=="donor" & description[1]=="home":
+                                    self.getVidLink()
+                                else:
+                                    self.getVidLink()
 
                 #No game today
                 if myteam==False:
