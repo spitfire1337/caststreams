@@ -53,7 +53,9 @@ class CastStreamsSensor(Entity):
                 data = r.json()
                 feeds = data["feeds"]
                 self._state = "good"
-                self._attribute = {'description': "Retrieved stream list"}
+                self._attribute = {'status': "Retrieved stream list"}
+                self._attribute = {'loggedin': "True"}
+
                 myteam = False
                 dummytext = None
                 for feed in feeds:
@@ -63,10 +65,12 @@ class CastStreamsSensor(Entity):
                             myteam=True
                             self._streamurl=feed["url"][0]
                             dummytext=feed["away"]["shortName"]
+                            self._attribute = {'game': feed["name"]}
                             self.getVidLink()
                         if self._team == feed["home"]["shortName"]:
                             myteam=True
                             dummytext =feed["home"]["shortName"]
+                            self._attribute = {'game': feed["name"]}
                             self._streamurl=feed["url"][0]
                             self.getVidLink()
 
@@ -74,11 +78,14 @@ class CastStreamsSensor(Entity):
                 if myteam==False:
                     self._state="unavailable"
                     self._attribute = {'status': "No game stream available"}
+                    self._attribute = {'game': "none"}
+
 
 
             else:
                 self._state = "Unavailable"
                 self._attribute = {'status': "Failed to retrieve stream list"}
+                self._attribute = {'game': "none"}
                 self._auth = None
                 self.signIn()
 
@@ -93,6 +100,7 @@ class CastStreamsSensor(Entity):
         else:
             self._state = "Unavailable"
             self._attribute = {'status': "Failed to retrieve stream link"}
+            self._attribute = {'game': "none"}
 
     def signIn(self):
         ip = requests.get('https://api.ipify.org').text
@@ -102,11 +110,14 @@ class CastStreamsSensor(Entity):
             data = r.json()
             token = data["token"]
             self._auth = token
-            self._attribute = {'loggedin': "True","ip":ip}
+            self._attribute = {'loggedin': "True"}
+            self._attribute = {'game': "none"}
             self.update()
         else:
             self._state = "Unavailable"
             self._attribute = {'description': "Failed to login","ip":ip}
+            self._attribute = {'loggedin': "False"}
+            self._attribute = {'game': "none"}
             _LOGGER.error("Couldn't authenticate using the provided credentials!")
 
 
