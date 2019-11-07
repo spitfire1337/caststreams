@@ -1,6 +1,6 @@
 {
     "domain": "caststreams",
-    "name": "Cast Strams",
+    "name": "Cast Streams",
     "documentation": "https://www.home-assistant.io/components/hue",
     "dependencies": [],
     "codeowners": ["@spitfire"],
