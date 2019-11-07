@@ -25,11 +25,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     email = config.get(CONF_EMAIL)
     password = config.get(CONF_PASSWORD)
 
-    exist = os.path.isfile(SYSFILE)
-    if exist:
-        add_devices([RaspberryChargerSensor(email, password)], True)
-    else:
-        _LOGGER.critical('Cant find the system class needed for this component, make sure that your kernel is recent and the hardware is supported.')
+    add_devices([RaspberryChargerSensor(email, password)], True)
 
 class RaspberryChargerSensor(Entity):
     """The class for this sensor"""
