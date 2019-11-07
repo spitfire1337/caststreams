@@ -76,7 +76,7 @@ class RaspberryChargerSensor(Entity):
 
     def signIn(self):
         ip = requests.get('https://api.ipify.org').text
-        r = requests.post('http://api.caststreams.com:2095/login-web', json={"email": self._email,"androidId":"00:00","deviceId":"02:00:00:00:00:00","password":self._email,"ipaddress":ip})
+        r = requests.post('http://api.caststreams.com:2095/login-web', json={"email": self._email,"androidId":"00:00","deviceId":"02:00:00:00:00:00","password":self._password,"ipaddress":ip})
         r.status_code
         if r.status_code==200:
             data = r.json()
@@ -87,6 +87,7 @@ class RaspberryChargerSensor(Entity):
         else:
             self._state = "Unavailable"
             self._attribute = {'description': "Failed to login","ip":ip}
+            _LOGGER.error("Couldn't authenticate using the provided credentials!")
 
 
     @property
