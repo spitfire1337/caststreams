@@ -75,7 +75,7 @@ class RaspberryChargerSensor(Entity):
 
 
     def signIn(self):
-        ip = get('https://api.ipify.org').text
+        ip = requests.get('https://api.ipify.org').text
         r = requests.post('http://api.caststreams.com:2095/login-web', json={"email": self._email,"androidId":"00:00","deviceId":"02:00:00:00:00:00","password":self._email,"ipaddress":ip})
         r.status_code
         if r.status_code==200:
