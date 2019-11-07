@@ -1,0 +1,8 @@
+{
+    "domain": "caststreams",
+    "name": "Cast Strams",
+    "documentation": "https://www.home-assistant.io/components/hue",
+    "dependencies": [],
+    "codeowners": ["@spitfire"],
+    "requirements": ["requests==2.22.0"]
+  }
