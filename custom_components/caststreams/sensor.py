@@ -55,11 +55,14 @@ class CastStreamsSensor(Entity):
                 self._attribute = {'description': "Retrieved stream list"}
                 myteam = False
                 myfeed = None
+                dummytext = None
                 for feed in feeds:
                     if self._team == feed["away"]["shortName"]:
                         myteam=True
+                        dummytext=feed["away"]["shortName"]
                     if self._team == feed["home"]["shortName"]:
                         myteam=True
+                        dummytext =feed["home"]["shortName"]
                     if myteam==True:
                         description=feed["desc"].split(' ')
                         if description[3]=="free":
@@ -67,6 +70,7 @@ class CastStreamsSensor(Entity):
 
                 if myteam==True:
                     self._state=myfeed
+                    self._attribute = {'My_team': dummytext}
 
             else:
                 self._state = "Unavailable"
