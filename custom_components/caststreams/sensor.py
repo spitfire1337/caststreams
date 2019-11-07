@@ -17,7 +17,7 @@ CONF_TEAM = 'team'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_EMAIL): cv.string,
-    vol.Required(CONF_PASSWORD): cv.string
+    vol.Required(CONF_PASSWORD): cv.string,
     vol.Required(CONF_TEAM): cv.string
     })
 
@@ -26,7 +26,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     import os
     email = config.get(CONF_EMAIL)
     password = config.get(CONF_PASSWORD)
-
+    team = config.get(CONF_TEAM)
     add_devices([RaspberryChargerSensor(email, password,team)], True)
 
 class RaspberryChargerSensor(Entity):
