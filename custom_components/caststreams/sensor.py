@@ -38,6 +38,7 @@ class CastStreamsSensor(Entity):
         self._password = password
         self._team = team
         self._auth = None
+        self._streamurl = None
         self.update()
 
     def update(self):
@@ -54,30 +55,44 @@ class CastStreamsSensor(Entity):
                 self._state = "good"
                 self._attribute = {'description': "Retrieved stream list"}
                 myteam = False
-                myfeed = None
                 dummytext = None
                 for feed in feeds:
                     description=feed["desc"].split(' ')
                     if description[3]=="free":
                         if self._team == feed["away"]["shortName"]:
                             myteam=True
-                            url=feed["url"][0]
+                            self._streamurl=feed["url"][0]
                             dummytext=feed["away"]["shortName"]
+                            self.getVidLink()
                         if self._team == feed["home"]["shortName"]:
                             myteam=True
                             dummytext =feed["home"]["shortName"]
-                            url=feed["url"][0]
-                        if myteam==True:
-                            self._state=url
-                            self._attribute = {'My_team': dummytext}
+                            self._streamurl=feed["url"][0]
+                            self.getVidLink()
+
+                #No game today
+                if myteam==False:
+                    self._state="unavailable"
+                    self._attribute = {'status': "No game stream available"}
 
 
             else:
                 self._state = "Unavailable"
-                self._attribute = {'description': "Failed to retrieve stream list"}
+                self._attribute = {'status': "Failed to retrieve stream list"}
                 self._auth = None
                 self.signIn()
 
+    def getVidLink(self):
+        r = requests.get('http://api.caststreams.com:2095/feeds', headers={ "Authorization": self._auth})
+        r.status_code
+        if r.status_code==200:
+            data = r.json()
+            link=data["link"]
+            self._state = link
+            self._attribute = {'status': "Retrieved video link"}
+        else:
+            self._state = "Unavailable"
+            self._attribute = {'status': "Failed to retrieve stream link"}
 
     def signIn(self):
         ip = requests.get('https://api.ipify.org').text
