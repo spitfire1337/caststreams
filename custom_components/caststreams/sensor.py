@@ -34,7 +34,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     team = config.get(CONF_TEAM)
     usertype = config.get(CONF_TYPE)
     region = config.get(CONF_REGION)
-    add_devices([CastStreamsSensor(email, password,team,usertype)], True)
+    add_devices([CastStreamsSensor(email, password,team,usertype,region)], True)
 
 class CastStreamsSensor(Entity):
     """The class for this sensor"""
