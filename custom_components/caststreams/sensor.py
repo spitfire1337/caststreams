@@ -69,46 +69,25 @@ class CastStreamsSensor(Entity):
                 dummytext = None
                 for feed in feeds:
                     description=feed["desc"].split(' ')
-                    if description[3]==self._usertype:
-                        if self._region == "EU" & self._usertype == "donor":
-                            if description[5]=="EU":
-                                if self._team == feed["away"]["shortName"]:
-                                    myteam=True
-                                    self._streamurl=feed["url"][0]
-                                    dummytext=feed["away"]["shortName"]
-                                    self._attribute = {'game': feed["name"]}
-                                    self.getVidLink()
-                                if self._team == feed["home"]["shortName"]:
-                                    myteam=True
-                                    dummytext =feed["home"]["shortName"]
-                                    self._attribute = {'game': feed["name"]}
-                                    self._streamurl=feed["url"][0]
-                                    self.getVidLink()
-                        else:
-                            if self._team == feed["away"]["shortName"]:
-                                myteam=True
-                                self._streamurl=feed["url"][0]
-                                dummytext=feed["away"]["shortName"]
-                                self._attribute = {'game': feed["name"]}
-                                if self._usertype=="donor" & description[1]=="away" & description[5]!="EU":
-                                    self._attribute = {'home/away': "away"}
-                                    self.getVidLink()
-                                else:
-                                    self.getVidLink()
-                            if self._team == feed["home"]["shortName"]:
-                                myteam=True
-                                dummytext =feed["home"]["shortName"]
-                                self._attribute = {'game': feed["name"]}
-                                self._streamurl=feed["url"][0]
-                                if self._usertype=="donor" & description[1]=="home":
-                                    self._attribute = {'home/away': "home"}
-                                    self.getVidLink()
-                                else:
-                                    self.getVidLink()
+                    if self._team == feed["away"]["shortName"]:
+                        myteam=True
+                        self._streamurl=feed["url"][0]
+                        dummytext=feed["away"]["shortName"]
+                        self._attribute = {'game': feed["name"]}
+                        self.getVidLink()
+                        break
+                    if self._team == feed["home"]["shortName"]:
+                        myteam=True
+                        dummytext =feed["home"]["shortName"]
+                        self._attribute = {'game': feed["name"]}
+                        self._streamurl=feed["url"][0]
+                        self.getVidLink()
+                        break
+                    
 
                 #No game today
                 if myteam==False:
-                    self._state="unavailable"
+                    self._state="https://www.caststreams.com/sry/sry.m3u8"
                     self._attribute = {'status': "No game stream available"}
                     self._attribute = {'game': "none"}
 
