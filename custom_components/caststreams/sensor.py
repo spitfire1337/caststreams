@@ -91,6 +91,7 @@ class CastStreamsSensor(Entity):
                                 dummytext=feed["away"]["shortName"]
                                 self._attribute = {'game': feed["name"]}
                                 if self._usertype=="donor" & description[1]=="away" & description[5]!="EU":
+                                    self._attribute = {'home/away': "away"}
                                     self.getVidLink()
                                 else:
                                     self.getVidLink()
@@ -100,6 +101,7 @@ class CastStreamsSensor(Entity):
                                 self._attribute = {'game': feed["name"]}
                                 self._streamurl=feed["url"][0]
                                 if self._usertype=="donor" & description[1]=="home":
+                                    self._attribute = {'home/away': "home"}
                                     self.getVidLink()
                                 else:
                                     self.getVidLink()
