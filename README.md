@@ -1,1 +1,1 @@
-./info.md
+.info.md
