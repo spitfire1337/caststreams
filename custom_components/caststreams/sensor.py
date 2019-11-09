@@ -71,16 +71,32 @@ class CastStreamsSensor(Entity):
                     description=feed["desc"].split(' ')
                     if self._team == feed["away"]["shortName"]:
                         myteam=True
-                        self._streamurl=feed["url"][0]
-                        dummytext=feed["away"]["shortName"]
+                        url=feed["url"][0].split('-')
+                        gamenum=url[0]
+                        #self._streamurl=feed["url"][0]
+                        if self._usertype=="donor":
+                            if self._region=="EU":
+                                self._streamurl=gamenum+"-he720"
+                            else:
+                                self._streamurl=gamenum+"-a720"
+                        else:
+                            self._streamurl=gamenum+"-a"
                         self._attribute = {'game': feed["name"]}
                         self.getVidLink()
                         break
                     if self._team == feed["home"]["shortName"]:
                         myteam=True
-                        dummytext =feed["home"]["shortName"]
+                        url=feed["url"][0].split('-')
+                        gamenum=url[0]
+                        #self._streamurl=feed["url"][0]
+                        if self._usertype=="donor":
+                            if self._region=="EU":
+                                self._streamurl=gamenum+"-he720"
+                            else:
+                                self._streamurl=gamenum+"-h720"
+                        else:
+                            self._streamurl=gamenum+"-a"
                         self._attribute = {'game': feed["name"]}
-                        self._streamurl=feed["url"][0]
                         self.getVidLink()
                         break
                     
