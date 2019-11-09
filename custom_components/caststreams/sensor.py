@@ -61,14 +61,10 @@ class CastStreamsSensor(Entity):
                 # print(r.text)
                 data = r.json()
                 feeds = data["feeds"]
-                self._state = "good"
-                self._attribute = {'status': "Retrieved stream list"}
-                self._attribute = {'loggedin': "True"}
 
                 myteam = False
                 dummytext = None
                 for feed in feeds:
-                    description=feed["desc"].split(' ')
                     if self._team == feed["away"]["shortName"]:
                         myteam=True
                         url=feed["url"][0].split('-')
@@ -81,8 +77,7 @@ class CastStreamsSensor(Entity):
                                 self._streamurl=gamenum+"-a720"
                         else:
                             self._streamurl=gamenum+"-a"
-                        self._attribute = {'game': feed["name"]}
-                        self._attribute = {'castreams_game': self._streamurl}
+                        self._attribute = {'game': feed["name"],'castreams_game': self._streamurl,'status': "Retrieved stream list"}
                         self.getVidLink()
                         break
                     if self._team == feed["home"]["shortName"]:
@@ -97,8 +92,7 @@ class CastStreamsSensor(Entity):
                                 self._streamurl=gamenum+"-h720"
                         else:
                             self._streamurl=gamenum+"-a"
-                        self._attribute = {'game': feed["name"]}
-                        self._attribute = {'castreams_game': self._streamurl}
+                        self._attribute = {'game': feed["name"],'castreams_game': self._streamurl,'status': "Retrieved stream list"}
                         self.getVidLink()
                         break
                     
@@ -107,7 +101,6 @@ class CastStreamsSensor(Entity):
                 if myteam==False:
                     self._state="https://www.caststreams.com/sry/sry.m3u8"
                     self._attribute = {'status': "No game stream available"}
-                    self._attribute = {'game': "none"}
 
 
 
@@ -129,7 +122,6 @@ class CastStreamsSensor(Entity):
         else:
             self._state = "Unavailable"
             self._attribute = {'status': "Failed to retrieve stream link"}
-            self._attribute = {'game': "none"}
 
     def signIn(self):
         ip = requests.get('https://api.ipify.org').text
