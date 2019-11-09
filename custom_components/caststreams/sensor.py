@@ -82,6 +82,7 @@ class CastStreamsSensor(Entity):
                         else:
                             self._streamurl=gamenum+"-a"
                         self._attribute = {'game': feed["name"]}
+                        self._attribute = {'castreams_game': self._streamurl}
                         self.getVidLink()
                         break
                     if self._team == feed["home"]["shortName"]:
@@ -97,6 +98,7 @@ class CastStreamsSensor(Entity):
                         else:
                             self._streamurl=gamenum+"-a"
                         self._attribute = {'game': feed["name"]}
+                        self._attribute = {'castreams_game': self._streamurl}
                         self.getVidLink()
                         break
                     
