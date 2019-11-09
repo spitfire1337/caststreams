@@ -2,7 +2,7 @@
 Adds a sensor with a stream source of a available NHL game by team. Can be used in scripts as a media source to play on TV's
 
 ## Installation:
-Install via HACS by adding repo source: https://github.com/spitfire1337/caststreams/
+Install via HACS by adding repo source: https://github.com/spitfire1337/caststreams/ as integration
 
 ## Usage:
 Add to configuration.yaml:
