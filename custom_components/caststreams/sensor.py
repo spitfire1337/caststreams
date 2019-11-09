@@ -118,10 +118,10 @@ class CastStreamsSensor(Entity):
             data = r.json()
             link=data["link"]
             self._state = link
-            self._attribute = {'status': "Retrieved video link"}
+            self._attribute += {'status': "Retrieved video link"}
         else:
             self._state = "Unavailable"
-            self._attribute = {'status': "Failed to retrieve stream link"}
+            self._attribute += {'status': "Failed to retrieve stream link"}
 
     def signIn(self):
         ip = requests.get('https://api.ipify.org').text
