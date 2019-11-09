@@ -118,10 +118,10 @@ class CastStreamsSensor(Entity):
             data = r.json()
             link=data["link"]
             self._state = link
-            self._attribute += {'status': "Retrieved video link"}
+            self._attribute =+ {'status': "Retrieved video link"}
         else:
             self._state = "Unavailable"
-            self._attribute += {'status': "Failed to retrieve stream link"}
+            self._attribute =+ {'status': "Failed to retrieve stream link"}
 
     def signIn(self):
         ip = requests.get('https://api.ipify.org').text
@@ -132,13 +132,10 @@ class CastStreamsSensor(Entity):
             token = data["token"]
             self._auth = token
             self._attribute = {'loggedin': "True"}
-            self._attribute = {'game': "none"}
             self.update()
         else:
             self._state = "Unavailable"
             self._attribute = {'description': "Failed to login","ip":ip}
-            self._attribute = {'loggedin': "False"}
-            self._attribute = {'game': "none"}
             _LOGGER.error("Couldn't authenticate using the provided credentials!")
 
 
